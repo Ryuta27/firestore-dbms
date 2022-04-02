@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+
 import "./App.css";
 import { db } from "./firebase";
 import {
@@ -8,14 +9,19 @@ import {
   updateDoc,
   deleteDoc,
   doc,
-  runTransaction, // Use for transaction
+  runTransaction,
 } from "firebase/firestore";
 
-function App() {
+import { Container } from "@mui/material";
+import { TextField } from "@mui/material";
+import { Stack } from "@mui/material";
+import { Button } from "@mui/material";
+
+const App = () => {
   const [newName, setNewName] = useState("");
   const [newAge, setNewAge] = useState(0);
-
   const [users, setUsers] = useState([]);
+
   const usersCollectionRef = collection(db, "users");
 
   const createUser = async () => {
@@ -80,49 +86,57 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <input
-        placeholder="Name..."
-        onChange={(event) => {
-          setNewName(event.target.value);
-        }}
-      />
-      <input
-        type="number"
-        placeholder="Age..."
-        onChange={(event) => {
-          setNewAge(event.target.value);
-        }}
-      />
+    <Container maxWidth="sm">
+      <Stack>
+        <TextField
+          id="standard-basic"
+          label="Name"
+          variant="standard"
+          onChange={(event) => {
+            setNewName(event.target.value);
+          }}
+        />
+        <TextField
+          id="standard-basic"
+          label="Age"
+          variant="standard"
+          type="number"
+          onChange={(event) => {
+            setNewAge(event.target.value);
+          }}
+        />
+        <Button variant="contained" onClick={createUser}>
+          Create User
+        </Button>
 
-      <button onClick={createUser}> Create User</button>
-      <ul>
-        {users.map((user) => (
-          <li key={user.age}>
-            {" "}
-            Name: {user.name}, Age: {user.age}, Id: {user.id}
-            <button
-              onClick={() => {
-                // updateUser(user.id, user.age);
-                updateUserByTransaction(user.id);
-              }}
-            >
+        <ul>
+          {users.map((user) => (
+            <li key={user.age}>
               {" "}
-              Increase Age
-            </button>
-            <button
-              onClick={() => {
-                deleteUser(user.id);
-              }}
-            >
-              {" "}
-              Delete User
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
+              Name: {user.name}, Age: {user.age}, Id: {user.id}
+              <button
+                onClick={() => {
+                  // updateUser(user.id, user.age);
+                  updateUserByTransaction(user.id);
+                }}
+              >
+                {" "}
+                Increase Age
+              </button>
+              <button
+                onClick={() => {
+                  deleteUser(user.id);
+                }}
+              >
+                {" "}
+                Delete User
+              </button>
+            </li>
+          ))}
+        </ul>
+      </Stack>
+    </Container>
   );
-}
+};
 
 export default App;
